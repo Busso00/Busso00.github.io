@@ -13,9 +13,10 @@
         }
 
         button {
-            padding: 1%;
+            padding: 0.5%;
             background-color: white;
             border-color: black;
+            border-radius: 3px;
         }
         #start{
             margin: 5%;
@@ -447,6 +448,7 @@
             let moveL = true;
             let moveR = true;
             H1.innerHTML = `points: 0`;
+            BUTTONSTART.innerHTML = '';
     
             for (j = 0; j < row; j++) {
                 MPlay[j] = [];
