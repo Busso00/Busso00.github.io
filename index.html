@@ -20,6 +20,7 @@
         }
         #start{
             margin: 5%;
+            font-size: 2em;
         }
 
         div {
@@ -30,7 +31,9 @@
 </head>
 
 <body>
+    <div id="opt-button">
     <h1>When you are ready press start button!</h1><button id="start">start!</button>
+    </div>
     <h2></h2>
     <h3></h3>
     <script>
@@ -38,7 +41,8 @@
         const BUTTONGAMETABLE = document.querySelector("h3");
         const BUTTONSTART = document.getElementById("start");
         const KEYBOARDPRESS = document.querySelector("html");
-        const H1 = document.querySelector('h1');
+        const DIV = document.getElementById("opt-button")
+        const H1 = document.querySelector("h1");
         const column = 9;
         const row = 23;
         const nShow = 3;
@@ -447,8 +451,9 @@
             let rotate = true;
             let moveL = true;
             let moveR = true;
+            DIV.innerHTML = '<h1></h1>';
             H1.innerHTML = `points: 0`;
-            BUTTONSTART.innerHTML = '';
+            
     
             for (j = 0; j < row; j++) {
                 MPlay[j] = [];
