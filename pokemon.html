@@ -1,0 +1,374 @@
+<html>
+
+<head>
+    <title>Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" width="device-width, initial-scale">
+    <link rel="icon" type="image/png" href="/favicon/favicon-32x32.png"/>
+    
+    <style>
+        .canv{
+            width: 100%;
+            height: 100vh;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body style="padding: 0%; margin: 0 auto;">
+    <div id="canv">
+    <canvas id="myCanvas" width="0" height="0" style="margin: 0%; padding: 0 auto;" height="0"></canvas>
+    </div>
+    <script>
+        var HTML = document.querySelector('html');
+        var CANVAS = document.getElementById('myCanvas');
+        var ctx = CANVAS.getContext('2d');
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerWidth * 726 / 1500;
+
+        class Pokeball {
+
+            constructor(x, y, r) {
+                this.opacity = 1;
+                this.x = x;
+                this.y = y;
+                this.r = r;
+                this.yup = y;
+                this.bOffset = 0;
+            }
+            draw() {
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#EF053D';
+                ctx.arc(this.x, this.yup, this.r, 0, 1 * Math.PI, true);
+                ctx.fill();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = 'rgb(229, 233, 238)';
+                ctx.arc(this.x, this.y, this.r, 0, 1 * Math.PI);
+                ctx.fill();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = 'white';
+                ctx.arc(this.x, this.y, this.r * 28 / 100, 0, 1 * Math.PI);
+                ctx.fill();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.moveTo(this.x - this.r, this.y + 2*this.r/100);
+                ctx.lineTo(this.x - this.r * 28 / 100, this.y + 2*this.r/100);
+                ctx.lineWidth = this.r * 4 / 100;
+                ctx.stroke();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.moveTo(this.x + this.r * 28 / 100, this.y + 2*this.r/100);
+                ctx.lineTo(this.x + this.r, this.y + 2*this.r/100);
+                ctx.lineWidth = this.r * 4 / 100;
+                ctx.stroke();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.moveTo(this.x - this.r, this.yup - 2*this.r/100);
+                ctx.lineTo(this.x - this.r * 28 / 100, this.yup - 2*this.r/100);
+                ctx.lineWidth = this.r * 4 / 100;
+                ctx.stroke();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.moveTo(this.x + this.r * 22 / 100, this.yup - 2*this.r/100);
+                ctx.lineTo(this.x + this.r, this.yup - 2*this.r/100);
+                ctx.lineWidth = this.r * 4 / 100;
+                ctx.stroke();
+                ctx.closePath();
+
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#FCFCFC';
+                ctx.arc(this.x, this.yup, this.r * 32 / 100, 0, 2 * Math.PI, true);
+                ctx.fill();
+                ctx.lineWidth = this.r * 8 / 100;
+                ctx.stroke();
+                ctx.closePath();
+
+
+                ctx.beginPath();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#fff';
+                ctx.arc(this.x, this.yup, this.r * 22 / 100, 0, 2 * Math.PI, true);
+                ctx.fill();
+                ctx.lineWidth = this.r * 2 / 100;
+                //ctx.strokeStyle = 'lightgray';
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            clear() {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+
+            setBackground() {
+                ctx.drawImage(back, back.width * 1 / 11, this.bOffset, back.width * 9 / 11, back.height * 9 / 22, 0, 0, window.innerWidth, window.innerWidth * 726 / 1500);
+            }
+
+            goDownBack(offset) {
+                this.bOffset += offset;
+            }
+
+            move(x, y) {
+                this.x += x;
+                this.y += y;
+                this.yup += y;
+            }
+
+            open(y) {
+                this.yup -= y;
+            }
+            zoomin(r) {
+                this.r += r;
+            }
+            fadeout(t) {
+                this.opacity -= t;
+            }
+
+        }
+        var primo = 1;
+        var pokeball = new Pokeball(30*window.innerWidth/1500, 30*window.innerWidth/1500, 30*window.innerWidth/1500);
+        var pokeball1 = new Pokeball(window.innerWidth - 30*window.innerWidth/1500, 30*window.innerWidth/1500, 30*window.innerWidth/1500);
+        var pokeball2 = new Pokeball(window.innerWidth / 2, 30*window.innerWidth/1500, 45*window.innerWidth/1500);
+        let actH = new Array(), actW = new Array();
+        var img = new Image();
+        var img1 = new Image();
+        var img2 = new Image();
+        var back = new Image();
+        var opacity;
+        let MetagrossCompleted = 0;
+        let HydreigonCompleted = 0;
+        let BlazikenCompleted = 0;
+        back.src = "./image/Masara-Town.png";
+        img.src = "./image/metagross.svg";
+        img1.src = "./image/hydreigon.svg";
+        img2.src = "./image/blaziken.svg";
+        let imgl = 0;
+        window.onbeforeunload=()=>{
+            window.scrollTo(0,0);
+        };
+        back.onload = () => { imgl++; check(); console.log(imgl); }
+        img.onload = () => { imgl++; check(); console.log(imgl); }
+        img1.onload = () => { imgl++; check(); console.log(imgl); }
+        img2.onload = () => { imgl++; check(); console.log(imgl); }
+        let spost=0;
+        function check() {
+            if (imgl == 4) {
+                pokeball.setBackground();
+                CANVAS.onwheel = (e) => {
+                    if (BlazikenCompleted == 0) {
+                        e.preventDefault();
+                        animate();
+                        opacity = 0;
+                    } else if(opacity<1){
+                        e.preventDefault();
+                        opacity+=0.05;
+                        ctx.globalAlpha = opacity;
+                        pokeball.setBackground();
+                        ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+                        ctx.globalAlpha = 1;
+                        ctx.drawImage(img2, 0, 0, img2.width, img2.height, pokeball2.x - actW[2] / 2, ((pokeball2.y + pokeball2.yup) / 2) - actH[2] / 2, actW[2], actH[2]);
+                        ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                        ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+
+                    }
+                }
+                HTML.onkeydown = (event) => {
+                    if (event.key == 'ArrowDown') {
+                        if (BlazikenCompleted == 0) {
+                            event.preventDefault();
+                            animate();
+                            opacity = 0;
+                        } else if(opacity<1){
+                            e.preventDefault();
+                            opacity+=0.05;
+                            ctx.globalAlpha = opacity;
+                            pokeball.setBackground();
+                            ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+                            ctx.globalAlpha = 1;
+                            ctx.drawImage(img2, 0, 0, img2.width, img2.height, pokeball2.x - actW[2] / 2, ((pokeball2.y + pokeball2.yup) / 2) - actH[2] / 2, actW[2], actH[2]);
+                            ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                            ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+                        }
+                    }
+                }
+                CANVAS.ontouchmove = (e)=>{
+                    if (BlazikenCompleted == 0) {
+                        e.preventDefault();
+                        animate();
+                        opacity = 0;
+                    } else if(opacity<1){
+                        e.preventDefault();
+                        opacity+=0.05;
+                        ctx.globalAlpha = opacity;
+                        pokeball.setBackground();
+                        ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+                        ctx.globalAlpha = 1;
+                        ctx.drawImage(img2, 0, 0, img2.width, img2.height, pokeball2.x - actW[2] / 2, ((pokeball2.y + pokeball2.yup) / 2) - actH[2] / 2, actW[2], actH[2]);
+                        ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                        ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+
+                    }
+                }
+                
+            }
+        }
+        let i=0;
+        let vy=0;
+        function animate() {
+
+            pokeball.setBackground();
+            if (pokeball.bOffset < (back.height * 13 / 22)){
+                pokeball.goDownBack(5);
+                return;
+            }
+                   
+            if (pokeball.opacity >= 0) {
+                //il tempo impiegato dalla pokéball per cadere a 2/3 dell altezza dello schermo è 2.766 s ->per arrivare a metà schermo (50m) in quel tempo vi vuole vo di 18 m/s
+                if (pokeball.x < ctx.canvas.width / 2) {
+                    pokeball.move(18*ctx.canvas.width/100/10,vy);//il tempo (frame) che ci mette a raggiungere il centro è 100/(18*2) 2,7s ->3 frame troppo pochi divido per 10 la velocità e per 100 l'accelerazione  ->circa 27 frame
+                    vy+=9.8*ctx.canvas.width/100/100;
+                    pokeball.draw();
+                    pokeball.zoomin(0.5*ctx.canvas.width/1500);
+                    i++;
+                }
+                else {
+                    vy=0;
+                    pokeball.open(1);
+                    pokeball.draw();
+                    if (pokeball.yup < (pokeball.y - 20))
+                        pokeball.fadeout(0.05);
+                }
+            } else if (MetagrossCompleted == 0) {
+                if (ctx.globalAlpha < 1)
+                    ctx.globalAlpha += 0.2;
+                if (primo == 1) {
+                    primo = 0;
+                    actH.push(pokeball.r * 2);
+                    actW.push(img.width / img.height * pokeball.r * 2);
+                } else {
+                    actH[0] += parseInt(0.2 * actH);
+                    actW[0] = actH * img.width / img.height;
+                }
+
+                ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+                if (actH[0] >= 300 * window.innerWidth / 1500) {
+                    MetagrossCompleted = 1;
+                    primo = 1;
+                    pokeball1.draw();
+                    i=0;
+                }
+            } else if (HydreigonCompleted == 0) {
+                
+                if (pokeball1.opacity >= 0) {
+
+                    if (pokeball1.x > ctx.canvas.width * 2 / 3) {
+                        pokeball1.move(-15*ctx.canvas.width/100/10, vy);
+                        vy+=9.8*ctx.canvas.width/100/100;
+                        pokeball1.draw();
+                        pokeball1.zoomin(0.5*ctx.canvas.width/1500);
+                        i++;
+                    }
+                    else {
+                        pokeball1.open(1);
+                        vy=0;
+                        pokeball1.draw();
+                        if (pokeball1.yup < (pokeball1.y - 20))
+                            pokeball1.fadeout(0.05);
+                    }
+                    ctx.globalAlpha = 1;
+                    ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+                } else {
+                    if (primo == 1) {
+                        primo = 0;
+                        actH.push(pokeball1.r * 2);
+                        actW.push(img1.width / img1.height * pokeball1.r * 2);
+                        opacity = pokeball1.opacity;
+                    } else {
+                        actH[1] += parseInt(0.2 * actH[1]);
+                        actW[1] = actH[1] * img1.width / img1.height;
+                    }
+                    if (opacity < 1) {
+                        opacity += 0.2;
+                    }
+                    ctx.globalAlpha = opacity;
+                    ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                    if (actH[1] >= 360 * window.innerWidth / 1500) {
+                        primo = 1;
+                        pokeball2.draw();
+                        HydreigonCompleted = 1;
+                        i=0;
+                    }
+                    ctx.globalAlpha = 1;
+                    ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+                }
+            } else if (BlazikenCompleted == 0) {
+
+                if (pokeball2.opacity >= 0) {
+
+                    if (pokeball2.x > ctx.canvas.width * 1 / 4) {
+                        pokeball2.move(-10*ctx.canvas.width/100/10, vy);//1 frame = 1/10s
+                        vy+=9.8*ctx.canvas.width/100/100;
+                        pokeball2.draw();
+                        pokeball2.zoomin(-0.5*ctx.canvas.width/1500);
+                        i++;
+                    }
+                    else {
+                        pokeball2.open(1);
+                        pokeball2.draw();
+                        if (pokeball2.yup < (pokeball2.y - 20))
+                            pokeball2.fadeout(0.05);
+                    }
+                    ctx.globalAlpha = 1;
+                    ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                    ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+                } else {
+                    if (primo == 1) {
+                        primo = 0;
+                        actH.push(pokeball2.r * 2);
+                        actW.push(img2.width / img2.height * pokeball2.r * 2);
+                        opacity = pokeball2.opacity;
+                    } else {
+                        actH[2] += parseInt(0.2 * actH[2]);
+                        actW[2] = actH[2] * img2.width / img2.height;
+                    }
+                    if (opacity < 1) {
+                        opacity += 0.2;
+                    }
+                    ctx.globalAlpha = opacity;
+                    ctx.drawImage(img2, 0, 0, img2.width, img2.height, pokeball2.x - actW[2] / 2, ((pokeball2.y + pokeball2.yup) / 2) - actH[2] / 2, actW[2], actH[2]);
+                    if (actH[2] >= 360 * window.innerWidth / 1500)
+                        BlazikenCompleted = 1;
+                    ctx.globalAlpha = 1;
+                    ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                    ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+                }
+            } else {
+                ctx.drawImage(img2, 0, 0, img2.width, img2.height, pokeball2.x - actW[2] / 2, ((pokeball2.y + pokeball2.yup) / 2) - actH[2] / 2, actW[2], actH[2]);
+                ctx.drawImage(img1, 0, 0, img1.width, img1.height, pokeball1.x - actW[1] / 2, ((pokeball1.y + pokeball1.yup) / 2) - actH[1] / 2, actW[1], actH[1]);
+                ctx.drawImage(img, 0, 0, img.width, img.height, pokeball.x - actW[0] / 2, ((pokeball.y + pokeball.yup) / 2) - actH[0] / 2, actW[0], actH[0]);
+            }
+        }
+    </script>
+    <h1>continue...</h1>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+
+</html>
