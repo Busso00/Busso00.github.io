@@ -10,12 +10,13 @@
     <style>
         canvas {
             border-radius: 0px;
-            height: 100vh - 2em;
-            width: 100vh - 2em;
+            height: 100vh;
+            width: 100vh;
         }
 
         body {
             display: flex;
+            margin: 0;
         }
 
         #zoomIN{
@@ -24,6 +25,15 @@
 
         #zoomOUT{
             font-size: 5em;
+        }
+
+        div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* vertical */
+            align-items: center;    /* horizontal */
+            height: 100vh;
+            text-align: center;
         }
 
     </style>
@@ -35,12 +45,12 @@
         <canvas id="myCanvas" width="1" height="1" color=""></canvas>
     </div>
 
-    <h1>
+    <div>
 
         <h1>Explore the manderblot fractal scrolling on it, zoom x2 with "+", zoom x0.5 with "-"</h1>
         <button id="zoomIN" style="width:100px;height:80px;">+</button>
         <button id="zoomOUT" style="width:100px;height:80px;">-</button>
-    </h1>
+    </div>
     <script src="./lib/gpu-browser.min.js"></script>
     <script type="text/javascript">
         const HTMLCANVAS = document.getElementById("myCanvas");
