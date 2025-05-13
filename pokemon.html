@@ -197,10 +197,10 @@
 
                     }
                 }
-                HTML.onkeydown = (event) => {
-                    if (event.key == 'ArrowDown') {
+                HTML.onkeydown = (e) => {
+                    if (e.key == 'ArrowDown') {
                         if (BlazikenCompleted == 0) {
-                            event.preventDefault();
+                            e.preventDefault();
                             animate();
                             opacity = 0;
                         } else if(opacity<1){
