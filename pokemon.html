@@ -192,7 +192,7 @@
             const currentY = e.touches[0].clientY;
 
             if (lastTouchY !== null) {
-                deltaY = lastTouchY-currentY;
+                deltaY = (lastTouchY-currentY)*2;
             }
 
             lastTouchY = currentY;
@@ -264,7 +264,7 @@
         let vy=0;
 
         function animateMultiple(speed){
-            for (let iter=0;iter<parseInt(speed/20);iter++){
+            for (let iter=0;iter<parseInt(speed/40);iter++){
                 animate()
             }
         }
