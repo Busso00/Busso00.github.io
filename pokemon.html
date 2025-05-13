@@ -200,6 +200,10 @@
         }, { passive: true });
 
 
+        CANVAS.addEventListener("touchend", () => {
+            lastTouchY = null;
+        });
+
         function check() {
             if (imgl == 4) {
                 pokeball.setBackground();
