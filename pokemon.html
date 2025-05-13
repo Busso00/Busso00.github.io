@@ -192,17 +192,12 @@
             const currentY = e.touches[0].clientY;
 
             if (lastTouchY !== null) {
-                deltaY = currentY - lastTouchY;
+                deltaY = lastTouchY-currentY;
             }
 
             lastTouchY = currentY;
         }
         }, { passive: true });
-
-
-        CANVAS.addEventListener("touchend", () => {
-            lastTouchY = null;
-        });
 
         function check() {
             if (imgl == 4) {
