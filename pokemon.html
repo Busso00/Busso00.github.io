@@ -182,7 +182,7 @@
                 CANVAS.onwheel = (e) => {
                     if (BlazikenCompleted == 0) {
                         e.preventDefault();
-                        animate();
+                        animateMultiple(e.deltaY);
                         opacity = 0;
                     } else if(opacity<1){
                         e.preventDefault();
@@ -239,8 +239,15 @@
         }
         let i=0;
         let vy=0;
-        function animate() {
 
+        function animateMultiple(speed){
+            for (i=0;i<speed;i++){
+                animate()
+            }
+        }
+
+        function animate() {
+            
             pokeball.setBackground();
             if (pokeball.bOffset < (back.height * 13 / 22)){
                 pokeball.goDownBack(5);
