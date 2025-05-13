@@ -176,6 +176,30 @@
         img1.onload = () => { imgl++; check(); console.log(imgl); }
         img2.onload = () => { imgl++; check(); console.log(imgl); }
         let spost=0;
+
+        let lastTouchY = null;
+        let totalScrollY = 0;
+        let deltaY = 0;
+
+        canvas.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) {
+            lastTouchY = e.touches[0].clientY;
+        }
+        }, { passive: true });
+
+        canvas.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 1) {
+            const currentY = e.touches[0].clientY;
+
+            if (lastTouchY !== null) {
+                deltaY = currentY - lastTouchY;
+            }
+
+            lastTouchY = currentY;
+        }
+        }, { passive: true });
+
+
         function check() {
             if (imgl == 4) {
                 pokeball.setBackground();
@@ -219,7 +243,7 @@
                 CANVAS.ontouchmove = (e)=>{
                     if (BlazikenCompleted == 0) {
                         e.preventDefault();
-                        animate();
+                        animateMultiple(deltaY);
                         opacity = 0;
                     } else if(opacity<1){
                         e.preventDefault();
