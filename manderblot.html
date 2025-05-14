@@ -94,8 +94,8 @@
                         
                         @fragment
                         fn fs_main(@builtin(position) pos: vec4<f32>) -> @location(0) vec4<f32> {
-                            const x0 = (pos.x / uniforms.width - 0.5) * uniforms.zoom + uniforms.offsetX;
-                            const y0 = (pos.y / uniforms.height - 0.5) * uniforms.zoom + uniforms.offsetY;
+                            let x0 = (pos.x / uniforms.width - 0.5) * uniforms.zoom + uniforms.offsetX;
+                            let y0 = (pos.y / uniforms.height - 0.5) * uniforms.zoom + uniforms.offsetY;
 
                             let x = 0.0;
                             let y = 0.0;
