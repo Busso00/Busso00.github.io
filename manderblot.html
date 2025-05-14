@@ -77,8 +77,9 @@
                     alphaMode: 'premultiplied'
                 });
 
+                const features = adapter.features;
+                console.log(features.has('shader-f64')); // true if f64 is supported
                 
-
                 const shaderCode = `
                         struct Uniforms {
                             width: f64,
