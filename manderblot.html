@@ -45,8 +45,17 @@
 
     <div id="target" width="2000" height="2000">
         <canvas></canvas>
-        <script type="module">
-            // WebGPU setup
+    </div>
+
+    <div style="margin:auto;">
+        <h1>Explore the manderblot fractal scrolling on it, zoom x2 with "+", zoom x0.5 with "-"</h1>
+        <button id="zoomIN" style="width:100px;height:100px;">+</button>
+        <button id="zoomOUT" style="width:100px;height:100px;">-</button>
+    </div>
+    <script src="./lib/gpu-browser.min.js"></script>
+    <script type="text/javascript">
+        {
+            //prefer to set context to webgpu when available
             async function main() {
                 const adapter = await navigator.gpu?.requestAdapter();
                 const device = await adapter?.requestDevice();
@@ -160,19 +169,7 @@
             }
 
             main();
-        </script>
-
-    </div>
-
-    <div style="margin:auto;">
-        <h1>Explore the manderblot fractal scrolling on it, zoom x2 with "+", zoom x0.5 with "-"</h1>
-        <button id="zoomIN" style="width:100px;height:100px;">+</button>
-        <button id="zoomOUT" style="width:100px;height:100px;">-</button>
-    </div>
-    <script src="./lib/gpu-browser.min.js"></script>
-    <script type="text/javascript">
-        {
-
+            
             try {
                 const HTMLCANVAS = document.querySelector("canvas");
                 const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
