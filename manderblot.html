@@ -55,7 +55,7 @@
     <script src="./lib/gpu-browser.min.js"></script>
     <script type="text/javascript">
         {
-            
+
             try {
                 const HTMLCANVAS = document.getElementById("myCanvas");
                 const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
@@ -176,34 +176,46 @@
                 let view = new Pixelmap(dim, 2, 0, 0);
                 console.log("finish");
             } catch (e) {
-                
-
-                console.log("Browser not supported!");
-                //webgpu setup
+                // WebGPU setup
                 async function initWebGPU() {
                     // Check if WebGPU is supported
                     if (!navigator.gpu) {
+                        console.log("Browser not supported!");
                         alert("WebGPU not supported on this browser (use Chrome and enable chrome://flags/#enable-unsafe-webgpu).");
                         return;
                     }
-                    const HTMLCANVAS = document.getElementById("myCanvas");
-                    const ZOOMBIN = document.getElementById("zoomIN");
-                    const ZOOMBOUT = document.getElementById("zoomOUT");
-                    
-                
+
+                    // Make sure the canvas exists
+                    const canvas = document.getElementById("myCanvas");
+                    if (!canvas) {
+                        console.error("Canvas element with id 'myCanvas' not found!");
+                        return;
+                    }
+                    const zoomIn = document.getElementById("zoomIN");
+                    const zoomOut = document.getElementById("zoomOUT");
+
+                    // Request adapter and device
                     const adapter = await navigator.gpu.requestAdapter();
+                    if (!adapter) {
+                        alert("Failed to get GPU adapter.");
+                        return;
+                    }
                     const device = await adapter.requestDevice();
-                    console.log("adapter");
-                    console.log(adapter);
-                    console.log("device");
-                    console.log(device);
-                    const ctx = HTMLCANVAS.getContext('webgpu');
-                
+
+                    console.log("adapter", adapter);
+                    console.log("device", device);
+
+                    // Set up the context
+                    const context = canvas.getContext('webgpu');
+                    if (!context) {
+                        console.error("Failed to get WebGPU context - check that your browser supports WebGPU");
+                        alert("Failed to get WebGPU context - make sure you're using a compatible browser with WebGPU enabled");
+                        return;
+                    }
 
                     // Choose a preferred format
                     const format = navigator.gpu.getPreferredCanvasFormat();
-
-                    ctx.configure({
+                    context.configure({
                         device: device,
                         format: format,
                         alphaMode: 'opaque'
@@ -212,22 +224,22 @@
                     // Create a simple color shader (fullscreen triangle)
                     const shaderModule = device.createShaderModule({
                         code: `
-            @vertex
-            fn vs_main(@builtin(vertex_index) VertexIndex : u32)
-                -> @builtin(position) vec4<f32> {
-                var pos = array<vec2<f32>, 3>(
-                vec2<f32>(-1.0, -1.0),
-                vec2<f32>(3.0, -1.0),
-                vec2<f32>(-1.0, 3.0)
-                );
-                return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
-            }
+      @vertex
+      fn vs_main(@builtin(vertex_index) VertexIndex : u32)
+      -> @builtin(position) vec4<f32> {
+        var pos = array<vec2<f32>, 3>(
+          vec2<f32>(-1.0, -1.0),
+          vec2<f32>(3.0, -1.0),
+          vec2<f32>(-1.0, 3.0)
+        );
+        return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+      }
 
-            @fragment
-            fn fs_main() -> @location(0) vec4<f32> {
-                return vec4<f32>(0.2, 0.4, 0.8, 1.0); // Blue-ish
-            }
-            `
+      @fragment
+      fn fs_main() -> @location(0) vec4<f32> {
+        return vec4<f32>(0.2, 0.4, 0.8, 1.0); // Blue-ish
+      }
+    `
                     });
 
                     const pipeline = device.createRenderPipeline({
@@ -249,6 +261,7 @@
                     function frame() {
                         const commandEncoder = device.createCommandEncoder();
                         const textureView = context.getCurrentTexture().createView();
+
                         const renderPass = commandEncoder.beginRenderPass({
                             colorAttachments: [{
                                 view: textureView,
@@ -266,10 +279,21 @@
                         requestAnimationFrame(frame);
                     }
 
+                    // Add event listeners for zoom buttons if needed
+                    if (zoomIn && zoomOut) {
+                        // Add zoom functionality here if needed
+                    }
+
                     frame(); // Start rendering
                 }
 
-                initWebGPU();
+                // Initialize the WebGPU context
+                if (document.readyState === 'loading') {
+                    window.addEventListener('DOMContentLoaded', initWebGPU);
+                } else {
+                    // DOM already loaded, run the initialization directly
+                    initWebGPU();
+                }
 
             }
         }
