@@ -94,19 +94,19 @@
                         
                         @fragment
                         fn fs_main(@builtin(position) pos: vec4<f32>) -> @location(0) vec4<f32> {
-                            var x0 = (pos.x / uniforms.width - 0.5) * uniforms.zoom + uniforms.offsetX;
-                            var y0 = (pos.y / uniforms.height - 0.5) * uniforms.zoom + uniforms.offsetY;
+                            const x0 = (pos.x / uniforms.width - 0.5) * uniforms.zoom + uniforms.offsetX;
+                            const y0 = (pos.y / uniforms.height - 0.5) * uniforms.zoom + uniforms.offsetY;
 
-                            var x = 0.0;
-                            var y = 0.0;
-                            var x2 = x*x;
-                            var y2 = y*y;
+                            let x = 0.0;
+                            let y = 0.0;
+                            let x2 = 0;
+                            let y2 = 0;
 
-                            var iter = 0u;
-                            var maxIter = 256u;
+                            let iter = 0u;
+                            const maxIter = 256u;
 
                             
-                            for (var i = 0u; i < maxIter; i = i + 1u) {
+                            for (; iter < maxIter; iter = iter + 1u) {
                                 if (x2 + y2 > 4.0) {
                                     break;
                                 }
@@ -115,11 +115,10 @@
                                 x = xtemp;
                                 x2 = x*x;
                                 y2 = y*y;
-                                iter = i;
                             }
 
-
-                            var color = vec3<f32>(0.0);
+                            const ratio = f32(iter)/f32(maxIter);
+                            let color = vec3<f32>(0.0);
 
                             if (iter == (maxIter - 1)){
                                 color = vec3<f32>(1.0);
