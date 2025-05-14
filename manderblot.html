@@ -177,123 +177,120 @@
                 console.log("finish");
             } catch (e) {
                 // WebGPU setup
-                async function initWebGPU() {
-                    // Check if WebGPU is supported
-                    if (!navigator.gpu) {
-                        console.log("Browser not supported!");
-                        alert("WebGPU not supported on this browser (use Chrome and enable chrome://flags/#enable-unsafe-webgpu).");
+                async function main() {
+                    const adapter = await navigator.gpu?.requestAdapter();
+                    const device = await adapter?.requestDevice();
+                    if (!device) {
+                        fail('need a browser that supports WebGPU');
                         return;
                     }
 
-                    // Make sure the canvas exists
-                    const canvas = document.getElementById("myCanvas");
-                    if (!canvas) {
-                        console.error("Canvas element with id 'myCanvas' not found!");
-                        return;
-                    }
-                    const zoomIn = document.getElementById("zoomIN");
-                    const zoomOut = document.getElementById("zoomOUT");
-
-                    // Request adapter and device
-                    const adapter = await navigator.gpu.requestAdapter();
-                    if (!adapter) {
-                        alert("Failed to get GPU adapter.");
-                        return;
-                    }
-                    const device = await adapter.requestDevice();
-
-                    console.log("adapter", adapter);
-                    console.log("device", device);
-
-                    // Set up the context
+                    // Get a WebGPU context from the canvas and configure it
+                    const canvas = document.querySelector('myCanvas');
                     const context = canvas.getContext('webgpu');
-                    if (!context) {
-                        console.error("Failed to get WebGPU context - check that your browser supports WebGPU");
-                        alert("Failed to get WebGPU context - make sure you're using a compatible browser with WebGPU enabled");
-                        return;
-                    }
-
-                    // Choose a preferred format
-                    const format = navigator.gpu.getPreferredCanvasFormat();
+                    const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
                     context.configure({
-                        device: device,
-                        format: format,
-                        alphaMode: 'opaque'
+                        device,
+                        format: presentationFormat,
                     });
 
-                    // Create a simple color shader (fullscreen triangle)
-                    const shaderModule = device.createShaderModule({
+                    const module = device.createShaderModule({
+                        label: 'our hardcoded rgb triangle shaders',
                         code: `
-      @vertex
-      fn vs_main(@builtin(vertex_index) VertexIndex : u32)
-      -> @builtin(position) vec4<f32> {
-        var pos = array<vec2<f32>, 3>(
-          vec2<f32>(-1.0, -1.0),
-          vec2<f32>(3.0, -1.0),
-          vec2<f32>(-1.0, 3.0)
-        );
-        return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
-      }
+                    struct OurVertexShaderOutput {
+                        @builtin(position) position: vec4f,
+                        @location(0) color: vec4f,
+                    };
 
-      @fragment
-      fn fs_main() -> @location(0) vec4<f32> {
-        return vec4<f32>(0.2, 0.4, 0.8, 1.0); // Blue-ish
-      }
-    `
+                    @vertex fn vs(
+                        @builtin(vertex_index) vertexIndex : u32
+                    ) -> OurVertexShaderOutput {
+                        let pos = array(
+                        vec2f( 0.0,  0.5),  // top center
+                        vec2f(-0.5, -0.5),  // bottom left
+                        vec2f( 0.5, -0.5)   // bottom right
+                        );
+                        var color = array<vec4f, 3>(
+                        vec4f(1, 0, 0, 1), // red
+                        vec4f(0, 1, 0, 1), // green
+                        vec4f(0, 0, 1, 1), // blue
+                        );
+
+                        var vsOutput: OurVertexShaderOutput;
+                        vsOutput.position = vec4f(pos[vertexIndex], 0.0, 1.0);
+                        vsOutput.color = color[vertexIndex];
+                        return vsOutput;
+                    }
+
+                    @fragment fn fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
+                        return fsInput.color;
+                    }
+                    `,
                     });
 
                     const pipeline = device.createRenderPipeline({
+                        label: 'hardcoded rgb triangle pipeline',
                         layout: 'auto',
                         vertex: {
-                            module: shaderModule,
-                            entryPoint: 'vs_main'
+                            module,
                         },
                         fragment: {
-                            module: shaderModule,
-                            entryPoint: 'fs_main',
-                            targets: [{ format }]
+                            module,
+                            targets: [{ format: presentationFormat }],
                         },
-                        primitive: {
-                            topology: 'triangle-list'
-                        }
                     });
 
-                    function frame() {
-                        const commandEncoder = device.createCommandEncoder();
-                        const textureView = context.getCurrentTexture().createView();
-
-                        const renderPass = commandEncoder.beginRenderPass({
-                            colorAttachments: [{
-                                view: textureView,
+                    const renderPassDescriptor = {
+                        label: 'our basic canvas renderPass',
+                        colorAttachments: [
+                            {
+                                // view: <- to be filled out when we render
+                                clearValue: [0.3, 0.3, 0.3, 1],
                                 loadOp: 'clear',
-                                clearValue: { r: 0, g: 0, b: 0, a: 1 },
-                                storeOp: 'store'
-                            }]
+                                storeOp: 'store',
+                            },
+                        ],
+                    };
+
+                    function render() {
+                        // Get the current texture from the canvas context and
+                        // set it as the texture to render to.
+                        renderPassDescriptor.colorAttachments[0].view =
+                            context.getCurrentTexture().createView();
+
+                        const encoder = device.createCommandEncoder({
+                            label: 'render triangle encoder',
                         });
+                        const pass = encoder.beginRenderPass(renderPassDescriptor);
+                        pass.setPipeline(pipeline);
+                        pass.draw(3);  // call our vertex shader 3 times
+                        pass.end();
 
-                        renderPass.setPipeline(pipeline);
-                        renderPass.draw(3, 1, 0, 0);
-                        renderPass.end();
-
-                        device.queue.submit([commandEncoder.finish()]);
-                        requestAnimationFrame(frame);
+                        const commandBuffer = encoder.finish();
+                        device.queue.submit([commandBuffer]);
                     }
 
-                    // Add event listeners for zoom buttons if needed
-                    if (zoomIn && zoomOut) {
-                        // Add zoom functionality here if needed
-                    }
-
-                    frame(); // Start rendering
+                    const observer = new ResizeObserver(entries => {
+                        for (const entry of entries) {
+                            const canvas = entry.target;
+                            const width = entry.contentBoxSize[0].inlineSize;
+                            const height = entry.contentBoxSize[0].blockSize;
+                            canvas.width = Math.max(1, Math.min(width, device.limits.maxTextureDimension2D));
+                            canvas.height = Math.max(1, Math.min(height, device.limits.maxTextureDimension2D));
+                            // re-render
+                            render();
+                        }
+                    });
+                    observer.observe(canvas);
                 }
 
-                // Initialize the WebGPU context
-                if (document.readyState === 'loading') {
-                    window.addEventListener('DOMContentLoaded', initWebGPU);
-                } else {
-                    // DOM already loaded, run the initialization directly
-                    initWebGPU();
+                function fail(msg) {
+                    // eslint-disable-next-line no-alert
+                    alert(msg);
                 }
+
+                main();
+
 
             }
         }
