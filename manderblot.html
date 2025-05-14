@@ -197,10 +197,8 @@
                     console.log(adapter);
                     console.log("device");
                     console.log(device);
-                    const ctx = HTMLCANVAS.getContext('webgpu');
-                    ctx.canvas.width = window.innerHeight > window.innerWidth ? window.innerWidth : window.innerHeight;
-                    ctx.canvas.height = ctx.canvas.width;
-                    const NTH = ctx.canvas.width;
+                    const ctx = HTMLCANVAS.canvas.getContext('webgpu');
+                
 
                     // Choose a preferred format
                     const format = navigator.gpu.getPreferredCanvasFormat();
