@@ -82,17 +82,17 @@
                 
                 const shaderCode = `
                         struct Uniforms {
-                            width: f64,
-                            height: f64,
-                            zoom: f64,
-                            offsetX: f64,
-                            offsetY: f64,
+                            width: f32,
+                            height: f32,
+                            zoom: f32,
+                            offsetX: f32,
+                            offsetY: f32,
                         };
 
                         @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 
                         @fragment
-                        fn fs_main(@builtin(position) pos: vec4<f64>) -> @location(0) vec4<f64> {
+                        fn fs_main(@builtin(position) pos: vec4<f32>) -> @location(0) vec4<f32> {
                             var x0 = (pos.x / uniforms.width - 0.5) * uniforms.zoom + uniforms.offsetX;
                             var y0 = (pos.y / uniforms.height - 0.5) * uniforms.zoom + uniforms.offsetY;
 
@@ -102,37 +102,46 @@
                             let maxIter = 256u;
 
                             loop {
-                            if (x*x + y*y > 4.0 || iter >= maxIter) {
-                                break;
-                            }
-                            let xtemp = x*x - y*y + x0;
-                            y = 2.0 * x * y + y0;
-                            x = xtemp;
-                            iter = iter + 1u;
+                                if (x*x + y*y > 4.0 || iter >= maxIter) {
+                                    break;
+                                }
+                                let xtemp = x*x - y*y + x0;
+                                y = 2.0 * x * y + y0;
+                                x = xtemp;
+                                iter = iter + 1u;
                             }
 
-                            var color = vec3<f64>(0.0);
+                            var color = vec3<f32>(0.0);
                             if (iter == maxIter) {
-                            color = vec3<f64>(1.0); // white
-                            } else {
-                            let t = f64(iter) / f64(maxIter);
-                            color = vec3<f64>(t, 0.5 * t, 1.0 - t);
+                                color = vec3<f32>(1.0); // white
+                            }else if (iter < 96 / 256 * maxIter) {
+                                color = vec3<f32>(0.0, 0.0, 0.0);
+                            }else if (iter < 128 / 256 * maxIter) {
+                                color = vec3<f32>(0, 0, 50.0/255.0);
+                            }else if (iter < 160 / 256 * maxIter) {
+                                color = vec3<f32>(0, 1.0, 1.0);
+                            }else if (iter < 192 / 256 * maxIter) {
+                                color = vec3<f32>(0, 1.0, 0);
+                            }else if (iter < 224 / 256 * maxIter) {
+                                color = vec3<f32>(1.0, 1.0, 0);
+                            }else{
+                                color = vec3<f32>(1.0, 0, 0);
                             }
 
-                            return vec4<f64>(color, 1.0);
+                            return vec4<f32>(color, 1.0);
                         }
 
                         @vertex
-                        fn vs_main(@builtin(vertex_index) VertexIndex : u32) -> @builtin(position) vec4<f64> {
-                            var pos = array<vec2<f64>, 6>(
-                            vec2<f64>(-1.0, -1.0),
-                            vec2<f64>(1.0, -1.0),
-                            vec2<f64>(-1.0, 1.0),
-                            vec2<f64>(-1.0, 1.0),
-                            vec2<f64>(1.0, -1.0),
-                            vec2<f64>(1.0, 1.0)
+                        fn vs_main(@builtin(vertex_index) VertexIndex : u32) -> @builtin(position) vec4<f32> {
+                            var pos = array<vec2<f32>, 6>(
+                            vec2<f32>(-1.0, -1.0),
+                            vec2<f32>(1.0, -1.0),
+                            vec2<f32>(-1.0, 1.0),
+                            vec2<f32>(-1.0, 1.0),
+                            vec2<f32>(1.0, -1.0),
+                            vec2<f32>(1.0, 1.0)
                             );
-                            return vec4<f64>(pos[VertexIndex], 0.0, 1.0);
+                            return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
                         }
                         `;
 
