@@ -57,7 +57,7 @@
         {
 
             try {
-                const HTMLCANVAS = document.getElementById("myCanvas");
+                const HTMLCANVAS = document.querySelector("canvas");
                 const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
                 const ZOOMBIN = document.getElementById("zoomIN");
                 const ZOOMBOUT = document.getElementById("zoomOUT");
