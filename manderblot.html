@@ -176,11 +176,7 @@
                 let view = new Pixelmap(dim, 2, 0, 0);
                 console.log("finish");
             } catch (e) {
-                const HTMLCANVAS = document.getElementById("myCanvas");
-                const ZOOMBIN = document.getElementById("zoomIN");
-                const ZOOMBOUT = document.getElementById("zoomOUT");
                 
-                const NTH = ctx.canvas.width;
 
                 console.log("Browser not supported!");
                 //webgpu setup
@@ -190,7 +186,11 @@
                         alert("WebGPU not supported on this browser (use Chrome and enable chrome://flags/#enable-unsafe-webgpu).");
                         return;
                     }
-
+                    const HTMLCANVAS = document.getElementById("myCanvas");
+                    const ZOOMBIN = document.getElementById("zoomIN");
+                    const ZOOMBOUT = document.getElementById("zoomOUT");
+                    
+                
                     const adapter = await navigator.gpu.requestAdapter();
                     const device = await adapter.requestDevice();
                     console.log("adapter");
@@ -200,6 +200,7 @@
                     const ctx = HTMLCANVAS.getContext('webgpu');
                     ctx.canvas.width = window.innerHeight > window.innerWidth ? window.innerWidth : window.innerHeight;
                     ctx.canvas.height = ctx.canvas.width;
+                    const NTH = ctx.canvas.width;
 
                     // Choose a preferred format
                     const format = navigator.gpu.getPreferredCanvasFormat();
