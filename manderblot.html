@@ -168,8 +168,8 @@
                 alert(msg);
             }
 
-            main();
-            
+            await main();
+
             try {
                 const HTMLCANVAS = document.querySelector("canvas");
                 const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
