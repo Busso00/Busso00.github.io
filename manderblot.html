@@ -200,7 +200,7 @@
                 frame();
             }
 
-            init().then(() => {
+            main().then(() => {
                 try {
                     const HTMLCANVAS = document.querySelector("canvas");
                     const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
