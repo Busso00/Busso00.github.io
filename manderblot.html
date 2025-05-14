@@ -99,19 +99,25 @@
 
                             var x = 0.0;
                             var y = 0.0;
+                            var x2 = x*x;
+                            var y2 = y*y;
+
                             var iter = 0u;
                             var maxIter = 256u;
 
-                            loop {
-                                if (x*x + y*y > 4.0 || iter >= maxIter) {
+                            
+                            for (var i = 0u; i < maxIter; i = i + 1u) {
+                                if (x2 + y2 > 4.0) {
                                     break;
                                 }
-                                let xtemp = x*x - y*y + x0;
+                                let xtemp = x2 - y2 + x0;
                                 y = 2.0 * x * y + y0;
                                 x = xtemp;
-                                iter = iter + 1u;
-                                
+                                x2 = x*x;
+                                y2 = y*y;
+                                iter = i;
                             }
+
 
                             var color = vec3<f32>(0.0);
                             var ratio = f32(iter)/f32(maxIter);
