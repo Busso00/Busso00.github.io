@@ -44,7 +44,7 @@
 <body>
 
     <div id="target" width="2000" height="2000">
-        <canvas id="myCanvas" class="myCanvas" width="1" height="1" color=""></canvas>
+        <canvas></canvas>
     </div>
 
     <div style="margin:auto;">
@@ -176,7 +176,7 @@
                 let view = new Pixelmap(dim, 2, 0, 0);
 
             } catch (e) {
-                alert('WebGPU not supported: will result in quality drop')
+                fail('GPU.js not supported')
 
             }
         }
@@ -187,7 +187,7 @@
             const adapter = await navigator.gpu?.requestAdapter();
             const device = await adapter?.requestDevice();
             if (!device) {
-                fail('need a browser that supports WebGPU');
+                fail('WebGPU not supported: will result in quality drop');
                 return;
             }
 
