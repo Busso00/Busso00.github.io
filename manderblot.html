@@ -218,6 +218,16 @@
                     frame(dim, xOffset, yOffset);
 
                 }
+
+                ZOOMBIN.onclick = function () {
+                    dim/=2;
+                    frame(dim, xOffset, yOffset);
+                };
+    
+                ZOOMBOUT.onclick = function () {
+                    dim*=2;
+                    frame(dim, xOffset, yOffset);
+                };
             };
 
             main().then(() => {
