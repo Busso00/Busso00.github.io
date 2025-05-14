@@ -54,6 +54,7 @@
     </div>
     <script src="./lib/gpu-browser.min.js"></script>
     <script type="text/javascript">
+    {
         const HTMLCANVAS = document.getElementById("myCanvas");
         const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
         const ZOOMBIN = document.getElementById("zoomIN");
@@ -178,8 +179,10 @@
 
 
         }
+    }
     </script>
     <script type="module">
+        {
         async function initWebGPU() {
             // Check if WebGPU is supported
             if (!navigator.gpu) {
@@ -262,6 +265,7 @@
         }
 
         initWebGPU();
+        }
     </script>
 </body>
 
