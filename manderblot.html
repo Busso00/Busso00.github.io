@@ -60,7 +60,10 @@
         ctx.canvas.width = window.innerHeight > window.innerWidth ? window.innerWidth : window.innerHeight;
         ctx.canvas.height = ctx.canvas.width;
         const NTH = ctx.canvas.width;
-        const gpu = new GPU();
+        const gpu = new GPU({
+            HTMLCANVAS,
+            context: ctx
+        });
 
         let dim = 4;
         let xOffset = 0, yOffset = 0;
