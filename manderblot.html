@@ -114,18 +114,18 @@
                             var color = vec3<f32>(0.0);
                             if (iter == maxIter) {
                                 color = vec3<f32>(1.0); // white
-                            }else if (iter < 96 / 256 * maxIter) {
+                            }else if (iter < 96.0 / 256.0 * maxIter) {
                                 color = vec3<f32>(0.0, 0.0, 0.0);
-                            }else if (iter < 128 / 256 * maxIter) {
-                                color = vec3<f32>(0, 0, 50.0/255.0);
-                            }else if (iter < 160 / 256 * maxIter) {
-                                color = vec3<f32>(0, 1.0, 1.0);
-                            }else if (iter < 192 / 256 * maxIter) {
-                                color = vec3<f32>(0, 1.0, 0);
-                            }else if (iter < 224 / 256 * maxIter) {
-                                color = vec3<f32>(1.0, 1.0, 0);
+                            }else if (iter < 128.0 / 256.0 * maxIter) {
+                                color = vec3<f32>(50.0/255.0, 0.0, 0.0);
+                            }else if (iter < 160.0 / 256.0 * maxIter) {
+                                color = vec3<f32>(1.0, 1.0, 0.0);
+                            }else if (iter < 192.0 / 256.0 * maxIter) {
+                                color = vec3<f32>(0.0, 1.0, 0.0);
+                            }else if (iter < 224.0 / 256.0 * maxIter) {
+                                color = vec3<f32>(0.0, 1.0, 1.0);
                             }else{
-                                color = vec3<f32>(1.0, 0, 0);
+                                color = vec3<f32>(0.0, 0.0, 1.0);
                             }
 
                             return vec4<f32>(color, 1.0);
