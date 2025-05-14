@@ -54,7 +54,11 @@
     </div>
     <script src="./lib/gpu-browser.min.js"></script>
     <script type="text/javascript">
-        {
+        
+        const ZOOMBIN = document.getElementById("zoomIN");
+        const ZOOMBOUT = document.getElementById("zoomOUT");
+        const HTMLCANVAS = document.querySelector("canvas");
+
             //prefer to set context to webgpu when available
             async function main() {
                 const adapter = await navigator.gpu?.requestAdapter();
@@ -65,8 +69,7 @@
                 }
 
                 // Get a WebGPU context from the canvas and configure it
-                const canvas = document.querySelector('canvas');
-                const context = canvas.getContext('webgpu');
+                const context = HTMLCANVAS.getContext('webgpu');
                 const format = navigator.gpu.getPreferredCanvasFormat();
                 context.configure({
                     device,
@@ -165,12 +168,15 @@
                     ]
                 });
 
-                function frame() {
-                    const width = canvas.width = canvas.clientWidth;
-                    const height = canvas.height = canvas.clientHeight;
-                    const zoom = 4.0; // Adjust for zoom level
-                    const offsetX = 0.0;
-                    const offsetY = 0.0;
+                let dim = 4;
+                let xOffset = 0, yOffset = 0;
+                let actx = 0;
+                let acty = 0;
+
+                function frame(zoom, offsetX, offsetY) {
+                    const width = HTMLCANVAS.width = HTMLCANVAS.clientWidth;
+                    const height = HTMLCANVAS.height = HTMLCANVAS.clientHeight;
+                    
 
                     const uniformData = new Float32Array([width, height, zoom, offsetX, offsetY]);
                     device.queue.writeBuffer(uniformBuffer, 0, uniformData.buffer);
@@ -194,15 +200,31 @@
                     device.queue.submit([commandEncoder.finish()]);
                 }
 
-                frame();
+                frame(dim, xOffset, yOffset);
+
+                HTMLCANVAS.onwheel = (e) => {
+                    e.preventDefault();
+                    let deltaY = Math.sign(e.deltaY);
+                    let deltaX = Math.sign(e.deltaX);
+                    if (deltaY < 0)
+                        yOffset -= 0.02 * dim;
+                    else if (deltaY > 0)
+                        yOffset += 0.02 * dim;
+                    if (deltaX < 0)
+                        xOffset -= 0.02 * dim;
+                    else if (deltaX > 0)
+                        xOffset += 0.02 * dim;
+
+                    frame(dim, xOffset, yOffset);
+
+                }
             };
 
             main().then(() => {
                 try {
-                    const HTMLCANVAS = document.querySelector("canvas");
+                    
                     const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
-                    const ZOOMBIN = document.getElementById("zoomIN");
-                    const ZOOMBOUT = document.getElementById("zoomOUT");
+                    
                     ctx.canvas.width = window.innerHeight > window.innerWidth ? window.innerWidth : window.innerHeight;
                     ctx.canvas.height = ctx.canvas.width;
                     const NTH = ctx.canvas.width;
@@ -323,7 +345,7 @@
             })
 
 
-        }
+        
     </script>
 
 
