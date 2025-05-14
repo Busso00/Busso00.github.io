@@ -119,22 +119,19 @@
                             }
 
 
-                            var color = vec3<f32>(0.0);
-                            var ratio = f32(iter)/f32(maxIter);
-                            if (iter == (maxIter -1 )) {
-                                color = vec3<f32>(1.0);
-                            }else if (ratio < ${T[0]}) {
-                                color = vec3<f32>(0.0, 0.0, 0.0);
+                            var color = vec3<f32>(1.0);
+                            if (ratio < ${T[0]}) {
+                                color = vec3<f32>(0.0);
                             }else if (ratio < ${T[1]}) {
-                                color = vec3<f32>(0.2, 0.0, 0.0);
+                                color = vec3<f32>(0.0, 0.0, 0.2);
                             }else if (ratio < ${T[2]}) {
-                                color = vec3<f32>(1.0, 1.0, 0.0);
+                                color = vec3<f32>(0.0, 1.0, 1.0);
                             }else if (ratio < ${T[3]}) {
                                 color = vec3<f32>(0.0, 1.0, 0.0);
                             }else if (ratio < ${T[4]}) {
-                                color = vec3<f32>(0.0, 1.0, 1.0);
-                            }else{
-                                color = vec3<f32>(0.0, 0.0, 1.0);
+                                color = vec3<f32>(1.0, 1.0, 0.0);
+                            }else if (iter < (maxIter - 1)) {
+                                color = vec3<f32>(1.0, 0.0, 0.0);
                             }
 
                             return vec4<f32>(color, 1.0);
