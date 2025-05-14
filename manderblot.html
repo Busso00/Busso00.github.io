@@ -80,6 +80,7 @@
                 const features = adapter.features;
                 console.log(features.has('shader-f64')); // true if f64 is supported
                 
+                const T = [96.0 / 256.0, 128.0 / 256.0, 160.0 / 256.0, 192.0 / 256.0, 224.0 / 256.0 ]
                 const shaderCode = `
                         struct Uniforms {
                             width: f32,
@@ -109,18 +110,25 @@
                                 y = 2.0 * x * y + y0;
                                 x = xtemp;
                                 iter = iter + 1u;
+                                
                             }
 
                             var color = vec3<f32>(0.0);
+                            var ratio =  f32(iter)/f32(maxIter)
                             if (iter == maxIter) {
                                 color = vec3<f32>(1.0);
+                            }else if (ratio < ${T[0]} ) {
+                                color = vec3<f32>(0.0, 0.0, 0.0);
+                            }else if (ratio < ${T[1]}) {
+                                color = vec3<f32>(0.2, 0.0, 0.0);
+                            }else if (ratio < ${T[2]} ) {
+                                color = vec3<f32>(1.0, 1.0, 0.0);
+                            }else if (ratio < ${T[3]} ) {
+                                color = vec3<f32>(0.0, 1.0, 0.0);
+                            }else if (ratio < ${T[4]}) {
+                                color = vec3<f32>(0.0, 1.0, 1.0);
                             }else{
-                                var t = f32(iter) / f32(maxIter); // Normalize to 0–1
-                                color = vec3<f32>(
-                                    0.5 + 0.5 * cos(6.2831 * (t + 0.00)), // R
-                                    0.5 + 0.5 * cos(6.2831 * (t + 0.33)), // G
-                                    0.5 + 0.5 * cos(6.2831 * (t + 0.66))  // B
-                                );
+                                color = vec3<f32>(0.0, 0.0, 1.0);
                             }
 
                             return vec4<f32>(color, 1.0);
