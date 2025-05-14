@@ -168,130 +168,132 @@
                 alert(msg);
             }
 
-            await main();
-
-            try {
-                const HTMLCANVAS = document.querySelector("canvas");
-                const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
-                const ZOOMBIN = document.getElementById("zoomIN");
-                const ZOOMBOUT = document.getElementById("zoomOUT");
-                ctx.canvas.width = window.innerHeight > window.innerWidth ? window.innerWidth : window.innerHeight;
-                ctx.canvas.height = ctx.canvas.width;
-                const NTH = ctx.canvas.width;
-
-
-                const gpu = new GPU({
-                    HTMLCANVAS,
-                    context: ctx
-                });
-
-                let dim = 4;
-                let xOffset = 0, yOffset = 0;
-                let actx = 0;
-                let acty = 0;
+            main().then(() => {
+                try {
+                    const HTMLCANVAS = document.querySelector("canvas");
+                    const ctx = HTMLCANVAS.getContext('webgl2', { premultipliedAlpha: false });
+                    const ZOOMBIN = document.getElementById("zoomIN");
+                    const ZOOMBOUT = document.getElementById("zoomOUT");
+                    ctx.canvas.width = window.innerHeight > window.innerWidth ? window.innerWidth : window.innerHeight;
+                    ctx.canvas.height = ctx.canvas.width;
+                    const NTH = ctx.canvas.width;
 
 
-                HTMLCANVAS.onwheel = (e) => {
-                    e.preventDefault();
-                    let deltaY = Math.sign(e.deltaY);
-                    let deltaX = Math.sign(e.deltaX);
-                    if (deltaY < 0)
-                        yOffset -= 0.02 * dim;
-                    else if (deltaY > 0)
-                        yOffset += 0.02 * dim;
-                    if (deltaX < 0)
-                        xOffset -= 0.02 * dim;
-                    else if (deltaX > 0)
-                        xOffset += 0.02 * dim;
+                    const gpu = new GPU({
+                        HTMLCANVAS,
+                        context: ctx
+                    });
 
-                    view = new Pixelmap(dim, 2, xOffset, yOffset);
-
-                }
-
-                ZOOMBIN.onclick = function () {
-
-                    view = new Pixelmap(dim /= 2, 2, xOffset, yOffset);
-
-                };
-                ZOOMBOUT.onclick = function () {
-
-                    view = new Pixelmap(dim *= 2, 2, xOffset, yOffset);
-
-                };
-                HTMLCANVAS.onmousedown = function (evt) {
-                    let rect = HTMLCANVAS.getBoundingClientRect();
-                    let x = evt.clientX - rect.left;
-                    let y = evt.clientY - rect.top;
-                    actx = xOffset + (x / ctx.canvas.width) * dim - dim / 2;
-                    acty = yOffset + dim / 2 - (y / ctx.canvas.width) * dim;
-                    console.log(actx + " " + acty);
-
-                };
-
-                class Pixelmap {
-                    constructor(size, n, oX, oY) {
-                        this.int = size / ctx.canvas.width;
-                        this.canvsize = ctx.canvas.width;
-                        console.log(size);
-                        let maxiter = 256 / Math.pow(size, 1 / 4) + 1 / Math.pow(size, 1 / 2) + 1 / (256 * size);
-                        //let maxiter=128/size;
-                        let colormap = gpu.createKernel(function (size, oX, oY, int, maxiter) {
-                            let i = this.thread.x;
-                            let j = this.thread.y;
-
-                            let n1x = i * int - size + oX;
-                            let n1y = size - j * int + oY;
-                            let cx = n1x;
-                            let cy = n1y;
-                            let mij = 0;
-                            let temp = n1x;
-                            for (; mij < maxiter; mij++) {
-                                /*
-                                let newmod = Math.pow(Math.sqrt(n1x * n1x + n1y * n1y), n);
-                                let newarg = Math.atan(n1y, n1x) * n;
-                                n1x = newmod * Math.cos(newarg);
-                                n1y = newmod * Math.sin(newarg);
-                                */
-                                temp = n1x;
-                                n1x = n1x * n1x - n1y * n1y;
-                                n1y *= 2 * temp;
-                                n1x += cx;
-                                n1y += cy;
-                                if (n1x * n1x + n1y * n1y > 4)
-                                    break;
-                            }
-                            if (mij == maxiter)
-                                this.color(255, 255, 255, 1);
-                            else if (mij < 96 / 256 * maxiter) {
-                                this.color(0, 0, 0, 1);
-                            }
-                            else if (mij < 128 / 256 * maxiter) {
-                                this.color(0, 0, 50, 1);
-                            }
-                            else if (mij < 160 / 256 * maxiter) {
-                                this.color(0, 255, 255, 1);
-                            }
-                            else if (mij < 192 / 256 * maxiter) {
-                                this.color(0, 255, 0, 1);
-                            }
-                            else if (mij < 224 / 256 * maxiter) {
-                                this.color(255, 255, 0, 1);
-                            }
-                            else {
-                                this.color(255, 0, 0, 1);
-                            }
+                    let dim = 4;
+                    let xOffset = 0, yOffset = 0;
+                    let actx = 0;
+                    let acty = 0;
 
 
-                        }).setOutput([NTH, NTH]).setOptimizeFloatMemory(true).setGraphical(true).setLoopMaxIterations(maxiter);
-                        colormap(size / 2, oX, oY, this.int, maxiter);
+                    HTMLCANVAS.onwheel = (e) => {
+                        e.preventDefault();
+                        let deltaY = Math.sign(e.deltaY);
+                        let deltaX = Math.sign(e.deltaX);
+                        if (deltaY < 0)
+                            yOffset -= 0.02 * dim;
+                        else if (deltaY > 0)
+                            yOffset += 0.02 * dim;
+                        if (deltaX < 0)
+                            xOffset -= 0.02 * dim;
+                        else if (deltaX > 0)
+                            xOffset += 0.02 * dim;
+
+                        view = new Pixelmap(dim, 2, xOffset, yOffset);
 
                     }
-                }
-                let view = new Pixelmap(dim, 2, 0, 0);
 
-            } catch (e) {
-                alert('GPU.js not supported');
-            }
+                    ZOOMBIN.onclick = function () {
+
+                        view = new Pixelmap(dim /= 2, 2, xOffset, yOffset);
+
+                    };
+                    ZOOMBOUT.onclick = function () {
+
+                        view = new Pixelmap(dim *= 2, 2, xOffset, yOffset);
+
+                    };
+                    HTMLCANVAS.onmousedown = function (evt) {
+                        let rect = HTMLCANVAS.getBoundingClientRect();
+                        let x = evt.clientX - rect.left;
+                        let y = evt.clientY - rect.top;
+                        actx = xOffset + (x / ctx.canvas.width) * dim - dim / 2;
+                        acty = yOffset + dim / 2 - (y / ctx.canvas.width) * dim;
+                        console.log(actx + " " + acty);
+
+                    };
+
+                    class Pixelmap {
+                        constructor(size, n, oX, oY) {
+                            this.int = size / ctx.canvas.width;
+                            this.canvsize = ctx.canvas.width;
+                            console.log(size);
+                            let maxiter = 256 / Math.pow(size, 1 / 4) + 1 / Math.pow(size, 1 / 2) + 1 / (256 * size);
+                            //let maxiter=128/size;
+                            let colormap = gpu.createKernel(function (size, oX, oY, int, maxiter) {
+                                let i = this.thread.x;
+                                let j = this.thread.y;
+
+                                let n1x = i * int - size + oX;
+                                let n1y = size - j * int + oY;
+                                let cx = n1x;
+                                let cy = n1y;
+                                let mij = 0;
+                                let temp = n1x;
+                                for (; mij < maxiter; mij++) {
+                                    /*
+                                    let newmod = Math.pow(Math.sqrt(n1x * n1x + n1y * n1y), n);
+                                    let newarg = Math.atan(n1y, n1x) * n;
+                                    n1x = newmod * Math.cos(newarg);
+                                    n1y = newmod * Math.sin(newarg);
+                                    */
+                                    temp = n1x;
+                                    n1x = n1x * n1x - n1y * n1y;
+                                    n1y *= 2 * temp;
+                                    n1x += cx;
+                                    n1y += cy;
+                                    if (n1x * n1x + n1y * n1y > 4)
+                                        break;
+                                }
+                                if (mij == maxiter)
+                                    this.color(255, 255, 255, 1);
+                                else if (mij < 96 / 256 * maxiter) {
+                                    this.color(0, 0, 0, 1);
+                                }
+                                else if (mij < 128 / 256 * maxiter) {
+                                    this.color(0, 0, 50, 1);
+                                }
+                                else if (mij < 160 / 256 * maxiter) {
+                                    this.color(0, 255, 255, 1);
+                                }
+                                else if (mij < 192 / 256 * maxiter) {
+                                    this.color(0, 255, 0, 1);
+                                }
+                                else if (mij < 224 / 256 * maxiter) {
+                                    this.color(255, 255, 0, 1);
+                                }
+                                else {
+                                    this.color(255, 0, 0, 1);
+                                }
+
+
+                            }).setOutput([NTH, NTH]).setOptimizeFloatMemory(true).setGraphical(true).setLoopMaxIterations(maxiter);
+                            colormap(size / 2, oX, oY, this.int, maxiter);
+
+                        }
+                    }
+                    let view = new Pixelmap(dim, 2, 0, 0);
+
+                } catch (e) {
+                    alert('GPU.js not supported');
+                }
+            })
+
+
         }
     </script>
 
