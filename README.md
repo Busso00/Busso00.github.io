@@ -1,2 +1,1 @@
-### In /mandelbrot you can find Rust code for efficient GPU computation
-
+### For mandelbrot app see Rust version
